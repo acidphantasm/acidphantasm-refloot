@@ -30,8 +30,8 @@ class BossesHaveLegaMedals implements IPostDBLoadMod
             {
                 continue;
             }
-            const boss = tables.bots.types[botType].inventory.items.Pockets;
-            const bossTotal = Object.values(boss).reduce((a, b) => a + b, 0);
+            const bossPockets = tables.bots.types[botType].inventory.items.Pockets;
+            const bossTotal = Object.values(bossPockets).reduce((a, b) => a + b, 0);
 
             let value = 0;
             let guess = 0;
@@ -42,7 +42,7 @@ class BossesHaveLegaMedals implements IPostDBLoadMod
             rollChance = value / (bossTotal + value)
             //this.logger.debug(`[BossesHaveLegaMedals] ${botType}: ${(bossTotal + value)} --- if value: ${value} then chance is ${rollChance}`);
             this.logger.debug(`[BossesHaveLegaMedals] ${botType}: Chance is ${Number(rollChance).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:2})}`);
-            boss["6656560053eaaa7a23349c86"] = value;
+            bossPockets["6656560053eaaa7a23349c86"] = value;
         }
     }
 }
