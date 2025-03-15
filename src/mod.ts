@@ -4,16 +4,16 @@ import { IPostDBLoadMod } from "@spt/models/external/IPostDBLoadMod";
 import { DatabaseService } from "@spt/services/DatabaseService";
 import { IDatabaseTables } from "@spt/models/spt/server/IDatabaseTables";
 import { ILogger } from "@spt/models/spt/utils/ILogger";
-import jsonc from "jsonc";
+import { jsonc } from "jsonc";
 import path from "path";
-import { VFS } from "@spt/utils/VFS";
+import { FileSystemSync } from "@spt/utils/FileSystemSync";
 
 class BossesHaveLegaMedals implements IPostDBLoadMod
 {
     private logger: ILogger
 
-    private static vfs = container.resolve<VFS>("VFS");    
-    private static config: Config = jsonc.parse(BossesHaveLegaMedals.vfs.readFile(path.resolve(__dirname, "../config/config.jsonc")));
+    private static fileSystemSync = container.resolve<FileSystemSync>("FileSystemSync");    
+    private static config: Config = jsonc.parse(BossesHaveLegaMedals.fileSystemSync.read(path.resolve(__dirname, "../config/config.jsonc")));
 
     public postDBLoad(container: DependencyContainer): void
     {
@@ -41,7 +41,7 @@ class BossesHaveLegaMedals implements IPostDBLoadMod
             value = Math.round((chance / 100) * (bossTotal + guess));
             rollChance = value / (bossTotal + value)
             //this.logger.debug(`[BossesHaveLegaMedals] ${botType}: ${(bossTotal + value)} --- if value: ${value} then chance is ${rollChance}`);
-            this.logger.debug(`[BossesHaveLegaMedals] ${botType}: Chance is ${Number(rollChance).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:2})}`);
+            if (BossesHaveLegaMedals.config.debugLogging) this.logger.debug(`[BossesHaveLegaMedals] ${botType}: Chance is ${Number(rollChance).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:2})}`);
             bossPockets["6656560053eaaa7a23349c86"] = value;
         }
     }
@@ -50,6 +50,7 @@ class BossesHaveLegaMedals implements IPostDBLoadMod
 interface Config 
 {
     legaMedalChance: number,
+    debugLogging: boolean
 }
 
 export const mod = new BossesHaveLegaMedals();
